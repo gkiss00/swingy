@@ -83,7 +83,7 @@ public class GameView {
                 boolean ret = controller.run();
                 if (ret){
                     enemy = null;
-                    updateButtonActivated();
+                    enableDirections();
                 }else{
                     //alive.setValue(false);
                 }
@@ -99,7 +99,7 @@ public class GameView {
                 boolean ret = controller.fight();
                 if (ret){
                     enemy = null;
-                    updateButtonActivated();
+                    enableDirections();
                 }else{
                     //alive.setValue(false);
                 }
@@ -139,20 +139,7 @@ public class GameView {
         //center to the screen
         frame.setLocationRelativeTo(null);
     }
-    //get button command
-    private String getCommande(int x, int y){
-        String cmd = "";
-        cmd = Integer.toString(x);
-        cmd += " ";
-        cmd += Integer.toString(y);
-        return cmd;
-    }
-    //get button color
-    private Color getColor(int x, int y){
-        if (y == (map_size / 2) && x == (map_size / 2))
-                    return Color.GREEN;
-        return Color.WHITE;
-    }
+    
     //the map
     private void configureButtons(){
         for (int y = 0; y < map_size; ++y){
@@ -160,6 +147,7 @@ public class GameView {
                 JButton b = new JButton();
                 b.setActionCommand(getCommande(x, y));
                 b.setBackground(getColor(x, y));
+                b.setOpaque(true);
                 buttons.add(b);
             }
         }
@@ -174,14 +162,17 @@ public class GameView {
                 if (ret == 1) { //place if safe 
                     enemy = null;
                     advert.setText(message_safe);
+                    enableDirections();
                 }else if (ret == 2){ //there is an enemy here
                     enemy = controller.getEnemy();
                     advert.setText(message_enemy);
+                    updateButtonActivated();
                 }
                 checkEnd();
-                updateButtonActivated();
+                
             });
         }
+        enableDirections();
     }
 
     private void checkEnd(){
@@ -207,6 +198,7 @@ public class GameView {
             }
         }
     }
+    
 
     private void configureBindings(){
         this.drop_game.bindBidirectional(controller.dropGameProperty());
@@ -234,5 +226,42 @@ public class GameView {
 
     private int getInt(String str){
         return Integer.parseInt(str);
+    }
+
+    //get button command
+    private String getCommande(int x, int y){
+        String cmd = "";
+        cmd = Integer.toString(x);
+        cmd += " ";
+        cmd += Integer.toString(y);
+        return cmd;
+    }
+
+    //get button color
+    private Color getColor(int x, int y){
+        if (y == (map_size / 2) && x == (map_size / 2))
+            return Color.GREEN;
+        return Color.WHITE;
+    }
+
+    //enable possibilities
+    private void enableDirections(){
+        int current_x = controller.getModel().getPosX();
+        int current_y = controller.getModel().getPosY();
+        for (int y = 0; y < map_size; ++y){
+            for (int x = 0; x < map_size; ++x){
+                if(x == current_x && y == current_y + 1){
+                    buttons.get((y * map_size) + x).setEnabled(true);
+                }else if(x == current_x && y == current_y - 1){
+                    buttons.get((y * map_size) + x).setEnabled(true);
+                }else if(x == current_x + 1 && y == current_y){
+                    buttons.get((y * map_size) + x).setEnabled(true);
+                }else if(x == current_x - 1 && y == current_y){
+                    buttons.get((y * map_size) + x).setEnabled(true);
+                }else{
+                    buttons.get((y * map_size) + x).setEnabled(false);
+                }
+            }
+        }
     }
 }

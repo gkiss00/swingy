@@ -345,6 +345,7 @@ public class Controller {
             System.out.println("You reached the border of the map, you won");
             model.requestUpdateCurrentHero();
             end_game.setValue(true);
+            resetProperty(end_game);
             MenuView mv = new MenuView(this);
         }
     }
