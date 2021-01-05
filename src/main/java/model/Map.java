@@ -42,7 +42,7 @@ public class Map{
         int ratio = lvl < 10 ? (3) : (4);
         int r = rand.nextInt(ratio);
 
-        int arm = rand.nextInt(5);
+        int arm = rand.nextInt(1);
         if (arm == 0)
             tmp = artefacts.get(rand.nextInt(artefacts.size()));
         if(r == 0)

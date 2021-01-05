@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : mar. 05 jan. 2021 à 12:58
+-- Généré le : mar. 05 jan. 2021 à 17:31
 -- Version du serveur :  8.0.19
 -- Version de PHP : 7.2.34
 
@@ -69,9 +69,15 @@ CREATE TABLE `heroes` (
 --
 
 INSERT INTO `heroes` (`H_Name`, `H_Class`, `H_Level`, `H_Experience`, `H_Attack`, `H_Defense`, `H_HitPoints`) VALUES
-('Achill', 'Guerrier', 1, 0, 30, 10, 100),
+('Achill', 'Guerrier', 3, 3050, 130, 60, 475),
 ('Bob', 'Forgeron', 1, 0, 30, 10, 100),
-('Hector', 'Guerrier', 1, 0, 30, 10, 100);
+('Hector', 'Guerrier', 1, 0, 30, 10, 100),
+('test', 'test', 1, 0, 30, 10, 100),
+('Morgane', 'Valkirie', 1, 0, 30, 10, 100),
+('Kassandra', 'Queen', 1, 0, 30, 10, 100),
+('Aatrox', 'Demon', 6, 5500, 430, 210, 1600),
+('ggg', 'ggg', 1, 500, 30, 10, 100),
+('hhhh', 'hhhh', 2, 500, 70, 30, 250);
 
 -- --------------------------------------------------------
 
@@ -81,16 +87,17 @@ INSERT INTO `heroes` (`H_Name`, `H_Class`, `H_Level`, `H_Experience`, `H_Attack`
 
 CREATE TABLE `heroesartefacts` (
   `H_Name` text NOT NULL,
-  `A_Name` text NOT NULL
+  `A_Name` text NOT NULL,
+  `A_Type` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `heroesartefacts`
 --
 
-INSERT INTO `heroesartefacts` (`H_Name`, `A_Name`) VALUES
-('Achill', 'Diamond sword'),
-('Bob', 'Wood helm');
+INSERT INTO `heroesartefacts` (`H_Name`, `A_Name`, `A_Type`) VALUES
+('Achill', 'Diamond sword', 'Weapon'),
+('hhhh', 'Diamond sword', 'Weapon');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

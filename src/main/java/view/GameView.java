@@ -2,6 +2,7 @@ package view;
 
 import controller.*;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
 import model.enemy.Enemy;
 
 import javax.swing.*;
@@ -21,6 +22,12 @@ public class GameView {
     private final SimpleBooleanProperty drop_game = new SimpleBooleanProperty(false);
     //END GAME
     private final SimpleBooleanProperty end_game = new SimpleBooleanProperty(false);
+    //MESSAGE
+    private final SimpleStringProperty message = new SimpleStringProperty("");
+    //ARTEFACT DROPPED 
+    private final SimpleBooleanProperty artefact_dropped = new SimpleBooleanProperty(false);
+
+
     //list buttons for the map
     private final List<JButton> buttons = new ArrayList<>();
 
@@ -31,6 +38,8 @@ public class GameView {
     private TextField input;
     private JButton run;
     private JButton fight;
+    private JButton equip;
+    private JButton not_equip;
     private JPanel input_validate;
     private JPanel board;
     private JPanel panel;
@@ -41,6 +50,7 @@ public class GameView {
     //messages
     private final String message_safe = "You are safe here";
     private final String message_enemy = "You felt on an enemy what u gonna do ?";
+    private final String message_equip = "You enemy dropped an artefact, take it ?";
 
     public GameView(Controller controller){
         this.controller = controller;
@@ -54,6 +64,8 @@ public class GameView {
         //configure action buttons
         configureRun();
         configureFight();
+        configureEquip();
+        configureNotEquip();
         configureInputValidate();
         //configure board game
         configureButtons();
@@ -106,12 +118,30 @@ public class GameView {
             }
         });
     }
+    //button equip
+    private void configureEquip(){
+        this.equip = new JButton("Equip");
+        equip.setEnabled(false);
+        equip.addActionListener(e ->{
+            controller.equip();
+        });
+    }
+    //button equip
+    private void configureNotEquip(){
+        this.not_equip = new JButton("Don't equip");
+        not_equip.setEnabled(false);
+        not_equip.addActionListener(e ->{
+            controller.notEquip();
+        });
+    }
 
     private void configureInputValidate(){
         this.input_validate = new JPanel();
         input_validate.setLayout(new BoxLayout(input_validate, BoxLayout.X_AXIS));
         input_validate.add(run);
         input_validate.add(fight);
+        input_validate.add(equip);
+        input_validate.add(not_equip);
     }
 
     private void configureBoard(){
@@ -199,10 +229,11 @@ public class GameView {
         }
     }
     
-
     private void configureBindings(){
         this.drop_game.bindBidirectional(controller.dropGameProperty());
         this.end_game.bindBidirectional(controller.endGameProperty());
+        this.message.bindBidirectional(controller.messageProperty());
+        this.artefact_dropped.bindBidirectional(controller.artefactDropped());
     }
 
     private void configureListener(){
@@ -214,6 +245,16 @@ public class GameView {
         this.end_game.addListener((obs, old, newValue) ->{
             if (newValue) {
                 frame.dispose();
+            }
+        });
+
+        this.artefact_dropped.addListener((obs, old, newValue) -> {
+            if (newValue) {
+                advert.setText(message_equip);
+                enableEquipButtons();
+            }else{
+                advert.setText(message_safe);
+                disableEquipButtons();
             }
         });
     }
@@ -263,5 +304,21 @@ public class GameView {
                 }
             }
         }
+    }
+
+    private void enableEquipButtons(){
+        this.equip.setEnabled(true);
+        this.not_equip.setEnabled(true);
+        this.run.setEnabled(false);
+        this.fight.setEnabled(false);
+        enableBoard(false);
+    }
+
+    private void disableEquipButtons(){
+        this.equip.setEnabled(false);
+        this.not_equip.setEnabled(false);
+        this.run.setEnabled(true);
+        this.fight.setEnabled(true);
+        enableDirections();
     }
 }

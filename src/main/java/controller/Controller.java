@@ -2,6 +2,7 @@ package controller;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import model.*;
 import model.artefact.Artefact;
 import model.enemy.Enemy;
@@ -41,8 +42,14 @@ public class Controller {
 
     //DROP FRAME --(GAME)--
     private final SimpleBooleanProperty drop_game = new SimpleBooleanProperty();
-    //END GAME
+    //END GAME --(GAME)--
     private final SimpleBooleanProperty end_game = new SimpleBooleanProperty(false);
+    //MESSAGE --(GAME)--
+    private final SimpleStringProperty message = new SimpleStringProperty("");
+    //ARTEFACT DROPPED --(GAME)--
+    private final SimpleBooleanProperty artefact_dropped = new SimpleBooleanProperty(false);
+
+    private Artefact dropped_artefact = null;
 
     //*******************************************************************************************
     //*******************************************************************************************
@@ -138,6 +145,12 @@ public class Controller {
     }
     public SimpleBooleanProperty endGameProperty(){
         return end_game;
+    }
+    public SimpleStringProperty messageProperty(){
+        return message;
+    }
+    public SimpleBooleanProperty artefactDropped(){
+        return artefact_dropped;
     }
     //*******************************************************************************************
     //*******************************************************************************************
@@ -260,7 +273,7 @@ public class Controller {
     public Enemy getEnemy(){
         return model.getEnemy();
     }
-
+    //Run from the fight
     public boolean run(){
         Random rand = new Random();
         int chances = model.getEnemy().getLevel() - model.getCurrentHero().getLevel();
@@ -277,64 +290,73 @@ public class Controller {
             return (fight());
         }
     }
-
+    //fight
     public boolean fight(){
         Enemy enemy = model.getEnemy();
         Random rand = new Random();
+        String resume = "U have to fight\n";
 
-        System.out.println("U have to fight");
         while(model.getCurrentHero().getHp() > 0 && enemy.getHp() > 0) {
             //You attack first
             if (rand.nextInt(4) == 0) {
-                System.out.println("You missed your attack");
+                resume += "You missed your attack\n";
             }else {
-                System.out.println("You attack your opponent");
+                resume += "You attack your opponent\n";
                 enemy.takeDamages(model.getCurrentHero().getTotalAttack());
             }
             //Check if enemy is dead
             if(enemy.getHp() <= 0) {
-                System.out.println("You killed your enemy");
+                resume += "You killed your enemy\n";
                 model.getCurrentHero().gainXP(enemy.dropXp());
                 dropWeapon();
                 return (true);
             }
             //Enemy attacks
             if (rand.nextInt(2) == 0) {
-                System.out.println("Enemy missed his attack");
+                resume += "Enemy missed his attack\n";
             }else {
-                System.out.println("Your opponent attacks your");
+                resume += "Your opponent attacks your\n";
                 model.getCurrentHero().takeDamages(enemy.getAttack());
             }
             //Check if you are dead
             if(model.getCurrentHero().getHp() <= 0) {
-                System.out.println("You get killed by your enemy");
+                resume += "You get killed by your enemy\n";
                 return (false);
             }
         }
+        //this point is never reached
         return (true);
     }
-
+    //equip weapon if one is dropped
     private void dropWeapon(){
         Enemy enemy = model.getEnemy();
         Scanner scan = new Scanner(System.in);
         Random rand = new Random();
         int r;
+        String resume = "";
+
         if (enemy.getArtefact() != null){
-            r = rand.nextInt(5);
+            r = rand.nextInt(1); //rise to minimise the chances
             if (r == 0){
                 String answer = "";
-                Artefact tmp = enemy.dropArtefact();
-                System.out.println("Your enemy dropped a " + tmp.toString());
-                do {
-                    System.out.println("Would you like to equip it ? (YES or NO)");
-                    answer = scan.nextLine();
-                }while(answer.compareTo("YES") != 0 && answer.compareTo("NO") != 0);
-                if (answer.compareTo("YES") == 0){
-                    model.equipCurrentHero(tmp);
-                    System.out.println("Wow, this new piece of equipment look nice on you");
-                }
+                dropped_artefact = enemy.dropArtefact();
+                resume += "Your enemy dropped a " + dropped_artefact.toString() + "\n";
+                resume += "Would you like to equip it ?\n";
+                this.artefact_dropped.setValue(true);
             }
         }
+    }
+
+    public void equip(){
+        if (dropped_artefact != null){
+            model.equipCurrentHero(dropped_artefact);
+            notEquip();
+        }
+    }
+
+    public void notEquip(){
+            dropped_artefact = null;
+            artefact_dropped.setValue(false);
     }
 
     public void checkEnd(){
