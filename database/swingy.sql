@@ -27,11 +27,17 @@ SET time_zone = "+00:00";
 -- Structure de la table `artefacts`
 --
 
+DROP DATABASE if exists swingy;
+
+CREATE DATABASE swingy;
+
+USE swingy;
+
 CREATE TABLE `artefacts` (
   `A_Name` text NOT NULL,
   `A_Type` text NOT NULL,
   `A_Amount` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Déchargement des données de la table `artefacts`
@@ -62,7 +68,7 @@ CREATE TABLE `heroes` (
   `H_Attack` int NOT NULL,
   `H_Defense` int NOT NULL,
   `H_HitPoints` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Déchargement des données de la table `heroes`
@@ -89,7 +95,7 @@ CREATE TABLE `heroesartefacts` (
   `H_Name` text NOT NULL,
   `A_Name` text NOT NULL,
   `A_Type` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Déchargement des données de la table `heroesartefacts`
