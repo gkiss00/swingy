@@ -39,7 +39,7 @@ public class MenuView {
 
     public MenuView(Controller controller){
         this.controller =controller;
-        frame = new JFrame("Swing my swing MENU!!!");
+        frame = new JFrame("SWING MENU");
 
         configureMenuView();
         configureFrame();
@@ -55,7 +55,7 @@ public class MenuView {
         frame.setPreferredSize(new Dimension(frame_size, frame_size));
         frame.pack();
 
-        frame.add(console_button);
+        frame.add(console_mode_button);
         frame.add(new_hero_button);
         frame.add(select_hero_button);
         frame.add(play_button);
@@ -71,32 +71,36 @@ public class MenuView {
         configurePlayButton();
     }
 
+    //console mode
     private void configureConsoleButton(){
         console_mode_button.addActionListener(e -> {
-            console_mode.setValue(true)
             this.frame.dispose();
+            console_mode.setValue(true);
         });
     }
 
+    //new hero
     private void configureNewHeroButton(){
         new_hero_button.addActionListener(e -> {
-            new_hero.setValue(true);
             this.frame.dispose();
+            new_hero.setValue(true);
         });
     }
 
+    //select hero
     private void configureSelectHeroButton(){
         select_hero_button.addActionListener(e -> {
-            select_hero.setValue(true);
             this.frame.dispose();
+            select_hero.setValue(true);
         });
     }
 
+    //game
     private void configurePlayButton(){
         play_button.addActionListener(e -> {
             if (controller.getModel().getCurrentHero() != null) {
-                play.setValue(true);
                 this.frame.dispose();
+                play.setValue(true);
             }
         });
     }
@@ -109,8 +113,8 @@ public class MenuView {
         this.select_hero.bindBidirectional(this.controller.selectHeroProperty());
         this.play.bindBidirectional(this.controller.playProperty());
 
-        this.play_enable.bindBidirectional(this.controller.playEnableProperty());
-        this.select_enable.bindBidirectional(this.controller.selectEnableProperty());
+        this.enable_play.bindBidirectional(this.controller.playEnableProperty());
+        this.enable_select.bindBidirectional(this.controller.selectEnableProperty());
     }
 
     private void configureListener(){

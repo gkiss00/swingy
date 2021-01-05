@@ -16,17 +16,13 @@ import java.util.ArrayList;
 public class GameView {
     private final Controller controller;
     private int map_size;
-    //CLOSE GAME
-    private final SimpleBooleanProperty close_game = new SimpleBooleanProperty(false);
+
     //CLOSE FRAME
     private final SimpleBooleanProperty drop_game = new SimpleBooleanProperty(false);
-    //VISIBILITY
-    private final SimpleBooleanProperty alive = new SimpleBooleanProperty();
-    //UPDATE WHEN THE SELECTED HERO CHANGE
-    private final SimpleBooleanProperty hero_changed = new SimpleBooleanProperty();
-
+    //list buttons for the map
     private final List<JButton> buttons = new ArrayList<>();
 
+    //the frame
     private JFrame frame;
     private final int frame_size = 1000;
 
@@ -39,19 +35,23 @@ public class GameView {
     private JPanel board;
     private JPanel panel;
 
+    //current enemy
     private Enemy enemy = null;
 
     public GameView(Controller controller){
         this.controller = controller;
+        this.frame = new JFrame("SWING GAME");
 
         configureLabel();
         configureInput();
         configureRun();
         configureFight();
         configureInputValidate();
-
+        configureFrame();
         configureBindings();
         configureListener();
+
+        frame.setVisible(true);
     }
 
     private void configureRun(){
@@ -64,7 +64,7 @@ public class GameView {
                     enemy = null;
                     updateButtonActivated();
                 }else{
-                    alive.setValue(false);
+                    //alive.setValue(false);
                 }
             }
         });
@@ -80,7 +80,7 @@ public class GameView {
                     enemy = null;
                     updateButtonActivated();
                 }else{
-                    alive.setValue(false);
+                    //alive.setValue(false);
                 }
             }
         });
@@ -118,9 +118,6 @@ public class GameView {
     }
 
     private void configureFrame(){
-        if (frame != null)
-            frame.dispose();
-        frame = new JFrame("Swing play");
         //To close the window
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setPreferredSize(new Dimension(frame_size, frame_size));
@@ -129,16 +126,8 @@ public class GameView {
 
         frame.add(panel);
         //frame.setLayout(new GridLayout(map_size, map_size));
+        //center to the screen
         frame.setLocationRelativeTo(null);
-        frame.addWindowListener(new WindowAdapter()
-        {
-            @Override
-            public void windowClosing(WindowEvent e)
-            {
-                close_game.setValue(true);
-                e.getWindow().dispose();
-            }
-        });
     }
 
     private void configureButtons(){
@@ -182,7 +171,7 @@ public class GameView {
     private void checkEnd(){
         boolean ret = controller.checkEnd();
         if (ret){
-            alive.setValue(false);
+            //alive.setValue(false);
         }else{
 
         }
@@ -209,34 +198,14 @@ public class GameView {
     }
 
     private void configureBindings(){
-        //VISIBILITY
-        this.alive.bindBidirectional(controller.playViewAliveProperty());
-        //HERA HAS BEEN SELECTED
-        this.hero_changed.bindBidirectional(controller.newHeroSelectedProperty());
-        //DELETE VIEW
-        this.drop_game.bindBidirectional(controller.dropGameViewProperty());
-        //DELETE ALL VIEW
-        this.close_game.bindBidirectional(controller.closeGameProperty());
+        this.drop_game.bindBidirectional(controller.dropGameProperty());
     }
 
     private void configureListener(){
-        this.alive.addListener((obs, old, newValue) -> {
-            frame.setVisible(newValue);
-        });
-
-        this.hero_changed.addListener((obs, old, newValue) -> {
-            map_size = controller.getMapSize();
-            configureLabel();
-            configureButtons();
-            configureBoard();
-            configurePanel();
-            configureFrame();
-        });
 
         this.drop_game.addListener((obs, old, newValue) ->{
             if (newValue) {
-                if (frame != null)
-                    frame.dispose();
+                frame.dispose();
             }
         });
     }

@@ -6,6 +6,7 @@ import model.*;
 import model.artefact.Artefact;
 import model.enemy.Enemy;
 import model.hero.Hero;
+import view.*;
 import swingy.Swingy;
 
 import java.util.List;
@@ -30,13 +31,29 @@ public class Controller {
     //PLAY ENABLE --(MENU)--
     private final SimpleBooleanProperty enable_play = new SimpleBooleanProperty(false);
 
+    //DROP FRAME --(CREATE)--
+    private final SimpleBooleanProperty drop_create = new SimpleBooleanProperty(false);
+    //INPUT ERRORS --(CEATE)--
+    private final SimpleIntegerProperty input_errors = new SimpleIntegerProperty(0);
+
+    //DROP FRAME --(SELECT)--
+    private final SimpleBooleanProperty drop_select = new SimpleBooleanProperty();
+
+    //DROP FRAME --(GAME)--
+    private final SimpleBooleanProperty drop_game = new SimpleBooleanProperty();
+
+    //*******************************************************************************************
+    //*******************************************************************************************
+    //COMSTRUCTOR
+    //*******************************************************************************************
+    //*******************************************************************************************
     public Controller(Model model){
         this.model = model;
 
         if (model.getNbHeroes() == 0)
-            select_enable.setValue(false);
+            enable_select.setValue(false);
         if (model.getCurrentHero() == null)
-            play_enable.setValue(false);
+            enable_play.setValue(false);
 
         configureListeners();
     }
@@ -71,6 +88,7 @@ public class Controller {
     //*******************************************************************************************
     //*******************************************************************************************
 
+    //MENU
     public SimpleBooleanProperty dropMenuProperty(){
         return drop_menu;
     }
@@ -91,98 +109,111 @@ public class Controller {
         return play;
     }
     public SimpleBooleanProperty playEnableProperty(){
-        return play_enable;
+        return enable_play;
     }
 
     public SimpleBooleanProperty selectEnableProperty(){
-        return select_enable;
+        return enable_select;
     }
 
-    
+    //CREATE
+    public SimpleBooleanProperty dropCreateProperty(){
+        return drop_create;
+    }
+
+    public SimpleIntegerProperty inputErrorsProperty(){
+        return input_errors;
+    }
+
+    //SELECT
+    public SimpleBooleanProperty dropSelectProperty(){
+        return drop_create;
+    }
+
+    //GAME
+    public SimpleBooleanProperty dropGameProperty(){
+        return drop_game;
+    }
     //*******************************************************************************************
     //*******************************************************************************************
     //LISTENERS
     //*******************************************************************************************
     //*******************************************************************************************
+    
     private void configureListeners(){
-
-        close_game.addListener((obs, old, newValue) ->{
-            if(newValue){
-                //CLOSE ALL FRAME
-                menu_view_drop.setValue(true);
-                create_view_drop.setValue(true);
-                select_view_drop.setValue(true);
-                play_view_drop.setValue(true);
-            }
-        });
-        create_view_alive.addListener((obs, odl, newValue) ->{
-            //IF CREATE VIEW CLOSE OPEN MENU
-            if (!newValue){
-                menu_view_alive.setValue(true);
-            }
-        });
-
-        select_view_alive.addListener((obs, odl, newValue) ->{
-            //IF SELECT VIEW CLOSE OPEN MENU
-            if (!newValue){
-                menu_view_alive.setValue(true);
-            }
-        });
-
-        play_view_alive.addListener((obs, odl, newValue) ->{
-            //IF PLAY VIEW CLOSE OPEN MENU
-            if (!newValue){
-                menu_view_alive.setValue(true);
-            }
-        });
-
-        play_console.addListener((obs, odl, newValue) ->{
+        //MENU
+        this.console_mode.addListener((obs, old, newValue) ->{
             if (newValue){
-                //CLOSE ALL FRAME
-                menu_view_drop.setValue(true);
-                create_view_drop.setValue(true);
-                select_view_drop.setValue(true);
-                play_view_drop.setValue(true);
-                //LAUNCH CONSOLE MODE
-                try {
+                //go in console mode
+                try{
                     Swingy.launchConsoleGame(model);
-                } catch (Exception e) {
+                }catch(Exception e){
                     e.printStackTrace();
                 }
+            }else{
+                
+            }
+        });
+
+        this.new_hero.addListener((obs, old, newValue) ->{
+            if (newValue){
+                //open the new hero view
+                CreateView cv = new CreateView(this);
+            }else{
+                
+            }
+        });
+
+        this.select_hero.addListener((obs, old, newValue) ->{
+            if (newValue){
+                //open the select hero view
+                SelectView cv = new SelectView(this);
+            }else{
+
+            }
+        });
+
+        this.play.addListener((obs, old, newValue) ->{
+            if (newValue){
+                //open the play view
+                GameView cv = new GameView(this);
+            }else{
+                
             }
         });
     }
     //*******************************************************************************************
     //*******************************************************************************************
-    //VALIDATE NEW HERO
+    //CREATE NEW HERO
     //*******************************************************************************************
     //*******************************************************************************************
-    public boolean validateName(String name){
-        if (model.heroExist(name)){
-            errors_create_view.setValue(1);
-            return (false);
+    private boolean validateInputs(String name, String _class){
+        if(validateName(name)){ //if bad name
+            input_errors.setValue(1);
+            return false;
         }
-        if (isNullOrEmpty(name)) {
-            errors_create_view.setValue(1);
-            return (false);
+        if (validateClass(_class)){ //if bad class
+            input_errors.setValue(2);
+            return false;
         }
-        errors_create_view.setValue(0);
-        return (true);
+        return true;
+    }
+    private boolean validateName(String name){
+        return (model.heroExist(name) || isNullOrEmpty(name));
     }
 
-    public boolean validateClass(String name){
-        if (isNullOrEmpty(name)) {
-            errors_create_view.setValue(2);
-            return (false);
-        }
-        return (true);
+    private boolean validateClass(String _class){
+        return (isNullOrEmpty(_class));
     }
 
     public void addNewHero(String name, String _class){
-        model.addNewHeroGui(name, _class);
-        new_hero_added.setValue(true);
-        new_hero_added.setValue(false);
-        select_enable.setValue(true);
+        if (!validateInputs(name, _class)){
+            return ;
+        }else{
+            model.addNewHeroGui(name, _class);
+            enable_select.setValue(true);
+            input_errors.setValue(0);
+        }
     }
     //*******************************************************************************************
     //*******************************************************************************************
@@ -193,7 +224,8 @@ public class Controller {
         String[] args = text.split("\\s+");
         model.setCurrentHero(args[0]);
         setMap();
-        play_enable.setValue(true);
+        enable_play.setValue(true);
+        MenuView mv = new MenuView(this);
     }
     //*******************************************************************************************
     //*******************************************************************************************

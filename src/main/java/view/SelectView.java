@@ -16,21 +16,15 @@ import java.util.ArrayList;
 public class SelectView {
     private final Controller controller;
 
+    //LISTES
     private List<Hero> heroes;
-
     private final List<JButton> buttons = new ArrayList<>();
     private int actual;
 
-    private final SimpleBooleanProperty close_game = new SimpleBooleanProperty(false);
-    //CLOSE
+    //DROP FRAME
     private final SimpleBooleanProperty drop_select = new SimpleBooleanProperty();
-    //VISIBILITY
-    private final SimpleBooleanProperty alive = new SimpleBooleanProperty();
-    //SET CURRENT HERO
-    private final SimpleBooleanProperty new_hero_selected = new SimpleBooleanProperty();
-    //UPDATE VIEW IF A NEW HERO IS ADDED
-    private final SimpleBooleanProperty new_hero_added = new SimpleBooleanProperty();
 
+    //frame
     private JFrame frame;
     private final int frame_size = 1000;
 
@@ -38,12 +32,12 @@ public class SelectView {
         this.controller = controller;
         heroes = controller.getAllHeroes();
 
-
         configuresButtons();
         configureFrame();
         configureBindings();
         configureListener();
 
+        frame.setVisible(true);
     }
 
     private void configureFrame(){
@@ -58,18 +52,10 @@ public class SelectView {
         }
 
         frame.setLayout(new GridLayout(heroes.size(), 1));
+        //center the screen
         frame.setLocationRelativeTo(null);
-
-        frame.addWindowListener(new WindowAdapter()
-        {
-            @Override
-            public void windowClosing(WindowEvent e)
-            {
-                close_game.setValue(true);
-                e.getWindow().dispose();
-            }
-        });
     }
+
     //ONE BUTTON BY HERO, CLICK TO SELECT THE HERO
     private void configuresButtons(){
         buttons.clear();
@@ -83,45 +69,18 @@ public class SelectView {
         }
 
         for (int i = 0; i < buttons.size(); ++i){
-            actual = i;
             buttons.get(i).addActionListener(e -> {
+                this.frame.dispose();
                 controller.selectHero(e.getActionCommand());
-                new_hero_selected.setValue(!new_hero_selected.getValue());
-                alive.setValue(false);
             });
         }
     }
 
     private void configureBindings(){
-        //VISIBILITY
-        this.alive.bindBidirectional(controller.selectViewAliveProperty());
-        //NEW HERO SELECTED
-        this.new_hero_selected.bindBidirectional(controller.newHeroSelectedProperty());
-        //NEW HERA ADDED
-        this.new_hero_added.bindBidirectional(controller.newHeroAddedProperty());
-        //DELETE VIEW
-        this.drop_select.bindBidirectional(controller.dropSelectViewProperty());
-        //DELETE ALL VIEW
-        this.close_game.bindBidirectional(controller.closeGameProperty());
+        this.drop_select.bindBidirectional(this.controller.dropSelectProperty());
     }
 
     private void configureListener(){
-        //UPDATE VISIBILITY
-        this.alive.addListener((obs, old, newValue) -> {
-            frame.setVisible(newValue);
-        });
-        //UPDATE VIEW
-        this.new_hero_added.addListener((obs, old, newValue) -> {
-            if(newValue){
-                heroes = controller.getAllHeroes();
-                configuresButtons();
-                configureFrame();
-            }
-        });
-        //CLOSE
-        this.drop_select.addListener((obs, old, newValue) ->{
-            if (newValue)
-                frame.dispose();
-        });
+
     }
 }

@@ -13,17 +13,14 @@ import java.awt.event.WindowEvent;
 
 public class CreateView {
     private final Controller controller;
-
-    private final SimpleBooleanProperty close_game = new SimpleBooleanProperty(false);
-
+    //DROP CREATE
     private final SimpleBooleanProperty drop_create = new SimpleBooleanProperty(false);
+    //ERRORS
+    private final SimpleIntegerProperty input_errors = new SimpleIntegerProperty(0);
 
-    private final SimpleBooleanProperty alive = new SimpleBooleanProperty();
-    private final SimpleIntegerProperty errors_p = new SimpleIntegerProperty(0);
-
+    //the view
     private final JFrame frame;
     private final int frame_size = 1000;
-
     private final JLabel name_label = new JLabel("Name  : ");
     private final JTextArea name_input = new JTextArea();
     private final JLabel class_label = new JLabel("Class : ");
@@ -31,6 +28,7 @@ public class CreateView {
     private final JLabel errors = new JLabel("");
     private final JButton validate = new JButton("Validate");
 
+    //error messages
     private final String error_msg0 = "";
     private final String error_msg1 = "Pseudo already taken";
     private final String error_msg2 = "Your hero class can't be empty";
@@ -44,6 +42,8 @@ public class CreateView {
         configureBindings();
         configureValidate();
         configureListener();
+
+        frame.setVisible(true);
     }
 
     private void configureFrame(){
@@ -58,20 +58,9 @@ public class CreateView {
         frame.add(class_input);
         frame.add(errors);
         frame.add(validate);
-
         frame.setLayout(new GridLayout(3, 2));
+        //center on screen
         frame.setLocationRelativeTo(null);
-
-        frame.addWindowListener(new WindowAdapter()
-        {
-            @Override
-            public void windowClosing(WindowEvent e)
-            {
-                close_game.setValue(true);
-                e.getWindow().dispose();
-            }
-        });
-
     }
 
     private void configureErrors(){
@@ -80,44 +69,24 @@ public class CreateView {
 
     private void configureValidate(){
         validate.addActionListener(e -> {
-            if (controller.validateName(name_input.getText()) && controller.validateClass(name_input.getText())) {
-                controller.addNewHero(name_input.getText(), class_input.getText());
-                name_input.setText("");
-                class_input.setText("");
-                alive.setValue(false);
-                frame.dispose();
-            }
+            controller.addNewHero(name_input.getText(), class_input.getText());
         });
     }
 
     private void configureBindings(){
-        //VISIBILITY
-        this.alive.bindBidirectional(controller.createViewAliveProperty());
-        //ERRORS INPUT
-        this.errors_p.bindBidirectional(controller.errorsCreateViewProperty());
-        //DELETE VIEW
-        this.drop_create.bindBidirectional(controller.dropCreateViewProperty());
-        //DELETE ALL VIEW
-        this.close_game.bindBidirectional(controller.closeGameProperty());
+        this.input_errors.bindBidirectional(controller.inputErrorsProperty());
+
+        this.drop_create.bindBidirectional(controller.dropCreateProperty());
     }
 
     private void configureListener(){
-        this.alive.addListener((obs, old, newValue) -> {
-            frame.setVisible(newValue);
-        });
-
-        this.errors_p.addListener((obs, old, newValue) -> {
+        this.input_errors.addListener((obs, old, newValue) -> {
             if ((int)newValue == 0)
                 errors.setText(error_msg0);
             else if ((int)newValue == 1)
                 errors.setText(error_msg1);
             else
                 errors.setText(error_msg2);
-        });
-
-        this.drop_create.addListener((obs, old, newValue) ->{
-            if (newValue)
-                frame.dispose();
         });
     }
 }
