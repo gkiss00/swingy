@@ -19,6 +19,8 @@ public class GameView {
 
     //CLOSE FRAME
     private final SimpleBooleanProperty drop_game = new SimpleBooleanProperty(false);
+    //END GAME
+    private final SimpleBooleanProperty end_game = new SimpleBooleanProperty(false);
     //list buttons for the map
     private final List<JButton> buttons = new ArrayList<>();
 
@@ -36,14 +38,16 @@ public class GameView {
     //current enemy
     private Enemy enemy = null;
 
+    //messages
+    private final String message_safe = "You are safe here";
+    private final String message_enemy = "You felt on an enemy what u gonna do ?";
+
     public GameView(Controller controller){
         this.controller = controller;
         this.map_size = controller.getMapSize();
         this.frame = new JFrame("SWING GAME");
 
-        //configure board game
-        configureButtons();
-        configureBoard();
+        
         //configure messages
         configureLabel();
         configureInput();
@@ -51,7 +55,11 @@ public class GameView {
         configureRun();
         configureFight();
         configureInputValidate();
+        //configure board game
+        configureButtons();
+        configureBoard();
         //configure frame and listener
+        configurePanel();
         configureFrame();
         configureBindings();
         configureListener();
@@ -131,19 +139,27 @@ public class GameView {
         //center to the screen
         frame.setLocationRelativeTo(null);
     }
+    //get button command
+    private String getCommande(int x, int y){
+        String cmd = "";
+        cmd = Integer.toString(x);
+        cmd += " ";
+        cmd += Integer.toString(y);
+        return cmd;
+    }
+    //get button color
+    private Color getColor(int x, int y){
+        if (y == (map_size / 2) && x == (map_size / 2))
+                    return Color.GREEN;
+        return Color.WHITE;
+    }
     //the map
     private void configureButtons(){
         for (int y = 0; y < map_size; ++y){
             for (int x = 0; x < map_size; ++x){
                 JButton b = new JButton();
-                b.setBackground(Color.WHITE);
-                if (y == map_size / 2 && x == map_size / 2)
-                    b.setBackground(Color.GREEN);
-                String cmd = "";
-                cmd = Integer.toString(x);
-                cmd += " ";
-                cmd += Integer.toString(y);
-                b.setActionCommand(cmd);
+                b.setActionCommand(getCommande(x, y));
+                b.setBackground(getColor(x, y));
                 buttons.add(b);
             }
         }
@@ -151,17 +167,16 @@ public class GameView {
         for (int i = 0; i < buttons.size(); ++i){
             buttons.get(i).addActionListener(e ->{
                 String args[] = e.getActionCommand().split("\\s+");
-                int x = Integer.parseInt(args[0]);
-                int y = Integer.parseInt(args[1]);
+                int x = getInt(args[0]);
+                int y = getInt(args[1]);
                 int ret = controller.goTo(e.getActionCommand());
-                if (ret == 1) {
-                    buttons.get((y * map_size) + x).setBackground(Color.GREEN);
+                buttons.get((y * map_size) + x).setBackground(Color.GREEN);
+                if (ret == 1) { //place if safe 
                     enemy = null;
-                    advert.setText("You are safe here");
-                }else if (ret == 2){
-                    buttons.get((y * map_size) + x).setBackground(Color.GREEN);
+                    advert.setText(message_safe);
+                }else if (ret == 2){ //there is an enemy here
                     enemy = controller.getEnemy();
-                    advert.setText("Enemy is here what u gonna do ?");
+                    advert.setText(message_enemy);
                 }
                 checkEnd();
                 updateButtonActivated();
@@ -170,12 +185,7 @@ public class GameView {
     }
 
     private void checkEnd(){
-        boolean ret = controller.checkEnd();
-        if (ret){
-            //alive.setValue(false);
-        }else{
-
-        }
+        controller.checkEnd();
     }
     //enables buttons
     private void updateButtonActivated(){
@@ -200,6 +210,7 @@ public class GameView {
 
     private void configureBindings(){
         this.drop_game.bindBidirectional(controller.dropGameProperty());
+        this.end_game.bindBidirectional(controller.endGameProperty());
     }
 
     private void configureListener(){
@@ -208,5 +219,20 @@ public class GameView {
                 frame.dispose();
             }
         });
+        this.end_game.addListener((obs, old, newValue) ->{
+            if (newValue) {
+                frame.dispose();
+            }
+        });
+    }
+
+    //*******************************************************************************************
+    //*******************************************************************************************
+    //UTILS
+    //*******************************************************************************************
+    //*******************************************************************************************
+
+    private int getInt(String str){
+        return Integer.parseInt(str);
     }
 }

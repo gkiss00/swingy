@@ -41,6 +41,8 @@ public class Controller {
 
     //DROP FRAME --(GAME)--
     private final SimpleBooleanProperty drop_game = new SimpleBooleanProperty();
+    //END GAME
+    private final SimpleBooleanProperty end_game = new SimpleBooleanProperty(false);
 
     //*******************************************************************************************
     //*******************************************************************************************
@@ -134,6 +136,9 @@ public class Controller {
     public SimpleBooleanProperty dropGameProperty(){
         return drop_game;
     }
+    public SimpleBooleanProperty endGameProperty(){
+        return end_game;
+    }
     //*******************************************************************************************
     //*******************************************************************************************
     //LISTENERS
@@ -158,6 +163,7 @@ public class Controller {
         this.new_hero.addListener((obs, old, newValue) ->{
             if (newValue){
                 //open the new hero view
+                resetProperty(new_hero);
                 CreateView cv = new CreateView(this);
             }else{
                 
@@ -167,6 +173,7 @@ public class Controller {
         this.select_hero.addListener((obs, old, newValue) ->{
             if (newValue){
                 //open the select hero view
+                resetProperty(select_hero);
                 SelectView cv = new SelectView(this);
             }else{
 
@@ -177,6 +184,7 @@ public class Controller {
             if (newValue){
                 //open the play view
                 setMap();
+                resetProperty(play);
                 GameView cv = new GameView(this);
             }else{
                 
@@ -214,6 +222,8 @@ public class Controller {
             model.addNewHeroGui(name, _class);
             enable_select.setValue(true);
             input_errors.setValue(0);
+            drop_create.setValue(true);
+            MenuView mv = new MenuView(this);
         }
     }
     //*******************************************************************************************
@@ -288,7 +298,6 @@ public class Controller {
                 dropWeapon();
                 return (true);
             }
-
             //Enemy attacks
             if (rand.nextInt(2) == 0) {
                 System.out.println("Enemy missed his attack");
@@ -328,16 +337,16 @@ public class Controller {
         }
     }
 
-    public boolean checkEnd(){
+    public void checkEnd(){
         int x = model.getPosX();
         int y = model.getPosY();
         int size = model.getMapSize();
         if (x == 0 || y == 0 || x == size - 1 || y == size - 1) {
             System.out.println("You reached the border of the map, you won");
             model.requestUpdateCurrentHero();
-            return (true);
+            end_game.setValue(true);
+            MenuView mv = new MenuView(this);
         }
-        return (false);
     }
     //*******************************************************************************************
     //*******************************************************************************************
@@ -353,5 +362,9 @@ public class Controller {
                 return (false);
         }
         return (true);
+    }
+
+    private void resetProperty(SimpleBooleanProperty sbp){
+        sbp.setValue(false);
     }
 }

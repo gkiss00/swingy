@@ -88,5 +88,10 @@ public class CreateView {
             else
                 errors.setText(error_msg2);
         });
+
+        this.drop_create.addListener((obl, old, newValue) -> {
+            if (newValue)
+                this.frame.dispose();
+        });
     }
 }
