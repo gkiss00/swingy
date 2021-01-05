@@ -283,10 +283,8 @@ public class Controller {
             chances = 1;
         result = rand.nextInt(chances);
         if (result == 0){
-            System.out.println("U run away");
             return (true);
         }else{
-            System.out.println("U can't run away");
             return (fight());
         }
     }
@@ -294,33 +292,24 @@ public class Controller {
     public boolean fight(){
         Enemy enemy = model.getEnemy();
         Random rand = new Random();
-        String resume = "U have to fight\n";
 
         while(model.getCurrentHero().getHp() > 0 && enemy.getHp() > 0) {
             //You attack first
-            if (rand.nextInt(4) == 0) {
-                resume += "You missed your attack\n";
-            }else {
-                resume += "You attack your opponent\n";
+            if (rand.nextInt(4) != 0)
                 enemy.takeDamages(model.getCurrentHero().getTotalAttack());
-            }
             //Check if enemy is dead
             if(enemy.getHp() <= 0) {
-                resume += "You killed your enemy\n";
-                model.getCurrentHero().gainXP(enemy.dropXp());
+                model.getCurrentHero().gainXPGUI(enemy.dropXp());
                 dropWeapon();
                 return (true);
             }
             //Enemy attacks
-            if (rand.nextInt(2) == 0) {
-                resume += "Enemy missed his attack\n";
-            }else {
-                resume += "Your opponent attacks your\n";
+            if (rand.nextInt(2) == 0)
                 model.getCurrentHero().takeDamages(enemy.getAttack());
-            }
             //Check if you are dead
             if(model.getCurrentHero().getHp() <= 0) {
-                resume += "You get killed by your enemy\n";
+                end_game.setValue(true);
+                resetProperty(end_game);
                 return (false);
             }
         }
@@ -330,18 +319,13 @@ public class Controller {
     //equip weapon if one is dropped
     private void dropWeapon(){
         Enemy enemy = model.getEnemy();
-        Scanner scan = new Scanner(System.in);
         Random rand = new Random();
         int r;
-        String resume = "";
 
         if (enemy.getArtefact() != null){
-            r = rand.nextInt(1); //rise to minimise the chances
+            r = rand.nextInt(5); //rise to minimise the chances
             if (r == 0){
-                String answer = "";
                 dropped_artefact = enemy.dropArtefact();
-                resume += "Your enemy dropped a " + dropped_artefact.toString() + "\n";
-                resume += "Would you like to equip it ?\n";
                 this.artefact_dropped.setValue(true);
             }
         }
@@ -364,7 +348,6 @@ public class Controller {
         int y = model.getPosY();
         int size = model.getMapSize();
         if (x == 0 || y == 0 || x == size - 1 || y == size - 1) {
-            System.out.println("You reached the border of the map, you won");
             model.requestUpdateCurrentHero();
             end_game.setValue(true);
             resetProperty(end_game);

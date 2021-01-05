@@ -129,6 +129,18 @@ public class Hero {
         }
     }
 
+    public void gainXPGUI(int xp){
+        int xp_needed = (level * 1000) + (((level - 1) * (level - 1)) * 450);
+        this.experience += xp;
+
+        while(this.experience >= xp_needed){
+            this.level += 1;
+            this.experience -= xp_needed;
+            xp_needed = (level * 1000) + (((level - 1) * (level - 1)) * 450);
+            increaseStats();
+        }
+    }
+
     private void increaseStats(){
         this.attack += level * 20;
         this.defense += level * 10;

@@ -96,8 +96,6 @@ public class GameView {
                 if (ret){
                     enemy = null;
                     enableDirections();
-                }else{
-                    //alive.setValue(false);
                 }
             }
         });
@@ -111,9 +109,8 @@ public class GameView {
                 boolean ret = controller.fight();
                 if (ret){
                     enemy = null;
-                    enableDirections();
-                }else{
-                    //alive.setValue(false);
+                    if (artefact_dropped.getValue() == false)
+                        enableDirections();
                 }
             }
         });
@@ -317,8 +314,6 @@ public class GameView {
     private void disableEquipButtons(){
         this.equip.setEnabled(false);
         this.not_equip.setEnabled(false);
-        this.run.setEnabled(true);
-        this.fight.setEnabled(true);
         enableDirections();
     }
 }
