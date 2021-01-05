@@ -15,30 +15,20 @@ import java.util.Scanner;
 public class Controller {
     private final Model model;
 
-    //PLAY ENABLE
-    private final SimpleBooleanProperty play_enable = new SimpleBooleanProperty(false);
-    //SELECT ENABLE
-    private final SimpleBooleanProperty select_enable = new SimpleBooleanProperty(false);
-    //CLOSE GAME
-    private final SimpleBooleanProperty close_game = new SimpleBooleanProperty(false);
-    //GO CONSOLE MODE
-    private final SimpleBooleanProperty play_console = new SimpleBooleanProperty(false);
-    //CLOSE FRAME
-    private final SimpleBooleanProperty menu_view_drop = new SimpleBooleanProperty(false);
-    private final SimpleBooleanProperty create_view_drop = new SimpleBooleanProperty(false);
-    private final SimpleBooleanProperty select_view_drop = new SimpleBooleanProperty(false);
-    private final SimpleBooleanProperty play_view_drop = new SimpleBooleanProperty(false);
-    //FRAME VISIBILITY
-    private final SimpleBooleanProperty menu_view_alive = new SimpleBooleanProperty(true);
-    private final SimpleBooleanProperty create_view_alive = new SimpleBooleanProperty(false);
-    private final SimpleBooleanProperty select_view_alive = new SimpleBooleanProperty(false);
-    private final SimpleBooleanProperty play_view_alive = new SimpleBooleanProperty(false);
-    //ERRORS IN ADD NEW HERO
-    private final SimpleIntegerProperty errors_create_view = new SimpleIntegerProperty(0);
-    //SELECT NEW HERO
-    private final SimpleBooleanProperty new_hero_selected = new SimpleBooleanProperty(false);
-    //NE HERO ADDED
-    private final SimpleBooleanProperty new_hero_added = new SimpleBooleanProperty(false);
+    //DROP FRAME --(MENU)--
+    private final SimpleBooleanProperty drop_menu = new SimpleBooleanProperty(false);
+    //GO CONSOLE MODE --(MENU)--
+    private final SimpleBooleanProperty console_mode = new SimpleBooleanProperty(false);
+    //CREATE NEW HERO --(MENU)--
+    private final SimpleBooleanProperty new_hero = new SimpleBooleanProperty(false);
+    //SELECT HERO --(MENU)--
+    private final SimpleBooleanProperty select_hero = new SimpleBooleanProperty(false);
+    //PLAY --(MENU)--
+    private final SimpleBooleanProperty play = new SimpleBooleanProperty(false);
+    //SELECT ENABLE --(MENU)--
+    private final SimpleBooleanProperty enable_select = new SimpleBooleanProperty(false);
+    //PLAY ENABLE --(MENU)--
+    private final SimpleBooleanProperty enable_play = new SimpleBooleanProperty(false);
 
     public Controller(Model model){
         this.model = model;
@@ -77,10 +67,29 @@ public class Controller {
     }
     //*******************************************************************************************
     //*******************************************************************************************
-    //VIEW PROPERTIES
+    //PROPERTIES
     //*******************************************************************************************
     //*******************************************************************************************
 
+    public SimpleBooleanProperty dropMenuProperty(){
+        return drop_menu;
+    }
+
+    public SimpleBooleanProperty consoleModeProperty(){
+        return console_mode;
+    }
+
+    public SimpleBooleanProperty newHeroProperty(){
+        return new_hero;
+    }
+
+    public SimpleBooleanProperty selectHeroProperty(){
+        return select_hero;
+    }
+
+    public SimpleBooleanProperty playProperty(){
+        return play;
+    }
     public SimpleBooleanProperty playEnableProperty(){
         return play_enable;
     }
@@ -89,58 +98,7 @@ public class Controller {
         return select_enable;
     }
 
-    public SimpleBooleanProperty closeGameProperty(){
-        return close_game;
-    }
-
-    //DROP
-    public SimpleBooleanProperty dropMenuViewProperty(){
-        return menu_view_drop;
-    }
-
-    public SimpleBooleanProperty dropSelectViewProperty(){
-        return select_view_drop;
-    }
-
-    public SimpleBooleanProperty dropCreateViewProperty(){
-        return create_view_drop;
-    }
-
-    public SimpleBooleanProperty dropGameViewProperty(){
-        return play_view_drop;
-    }
-    //ALIVE (VISIBILITY)
-    public SimpleBooleanProperty menuViewAliveProperty(){
-        return menu_view_alive;
-    }
-
-    public SimpleBooleanProperty createViewAliveProperty(){
-        return create_view_alive;
-    }
-
-    public SimpleBooleanProperty selectViewAliveProperty(){
-        return select_view_alive;
-    }
-
-    public SimpleBooleanProperty playViewAliveProperty(){
-        return play_view_alive;
-    }
-    //ERRORS INPUT
-    public SimpleIntegerProperty errorsCreateViewProperty(){
-        return errors_create_view;
-    }
-    //NEW HERO SELECTED
-    public SimpleBooleanProperty newHeroSelectedProperty(){
-        return new_hero_selected;
-    }
-    //NEW HERO ADDED
-    public SimpleBooleanProperty newHeroAddedProperty(){
-        return new_hero_added;
-    }
-    //PLAY CONSOLE MODE
-    public SimpleBooleanProperty playConsoleProperty(){
-        return play_console;
-    }
+    
     //*******************************************************************************************
     //*******************************************************************************************
     //LISTENERS

@@ -11,44 +11,39 @@ import java.awt.event.WindowEvent;
 
 public class MenuView {
     private final Controller controller;
-    //CLOSE GAME
-    private final SimpleBooleanProperty close_game = new SimpleBooleanProperty(false);
-    //CLOSE FRAME
+    //DROP FRAME
     private final SimpleBooleanProperty drop_menu = new SimpleBooleanProperty(false);
+
     //GO CONSOLE MODE
-    private final SimpleBooleanProperty play_console = new SimpleBooleanProperty(false);
-    //VISIBILITY
-    private final SimpleBooleanProperty alive = new SimpleBooleanProperty();
-    //PLAY ENABLE
-    private final SimpleBooleanProperty play_enable = new SimpleBooleanProperty();
+    private final SimpleBooleanProperty console_mode = new SimpleBooleanProperty(false);
+    //CREATE NEW HERO
+    private final SimpleBooleanProperty new_hero = new SimpleBooleanProperty(false);
+    //SELECT HERO
+    private final SimpleBooleanProperty select_hero = new SimpleBooleanProperty(false);
+    //PLAY
+    private final SimpleBooleanProperty play = new SimpleBooleanProperty(false);
+
     //SELECT ENABLE
-    private final SimpleBooleanProperty select_enable = new SimpleBooleanProperty();
-    private final SimpleBooleanProperty create_view_alive = new SimpleBooleanProperty();
-    private final SimpleBooleanProperty select_view_alive = new SimpleBooleanProperty();
-    private final SimpleBooleanProperty play_view_alive = new SimpleBooleanProperty();
-
-    private final SimpleBooleanProperty new_hero_selected = new SimpleBooleanProperty(false);
-
+    private final SimpleBooleanProperty enable_select = new SimpleBooleanProperty();
+    //PLAY ENABLE
+    private final SimpleBooleanProperty enable_play = new SimpleBooleanProperty();
+    
     private final JFrame frame;
     private final int frame_size = 1000;
 
-    private final JButton console_button = new JButton("Console");
+    //Buttons
+    private final JButton console_mode_button = new JButton("Console");
     private final JButton new_hero_button = new JButton("New Hero");
     private final JButton select_hero_button = new JButton("Select an Hero");
     private final JButton play_button = new JButton("Play");
-
-
 
     public MenuView(Controller controller){
         this.controller =controller;
         frame = new JFrame("Swing my swing MENU!!!");
 
         configureMenuView();
-
         configureFrame();
-
         configureBindings();
-
         configureListener();
 
         frame.setVisible(true);
@@ -65,18 +60,8 @@ public class MenuView {
         frame.add(select_hero_button);
         frame.add(play_button);
         frame.setLayout(new GridLayout(4, 1));
-
+        //center on the screen
         frame.setLocationRelativeTo(null);
-        //TO CLOSE VERY OTHERS WINDOWS
-        frame.addWindowListener(new WindowAdapter()
-        {
-            @Override
-            public void windowClosing(WindowEvent e)
-            {
-                close_game.setValue(true);
-                e.getWindow().dispose();
-            }
-        });
     }
 
     private void configureMenuView(){
@@ -86,81 +71,58 @@ public class MenuView {
         configurePlayButton();
     }
 
-    //GO IN CONSOLE MODE
     private void configureConsoleButton(){
-        console_button.setPreferredSize(new Dimension(100, 100));
-        console_button.addActionListener(e -> play_console.setValue(true));
+        console_mode_button.addActionListener(e -> {
+            console_mode.setValue(true)
+            this.frame.dispose();
+        });
     }
 
     private void configureNewHeroButton(){
         new_hero_button.addActionListener(e -> {
-            alive.setValue(false);
-            create_view_alive.setValue(true);
+            new_hero.setValue(true);
+            this.frame.dispose();
         });
     }
 
     private void configureSelectHeroButton(){
         select_hero_button.addActionListener(e -> {
-            alive.setValue(false);
-            select_view_alive.setValue(true);
+            select_hero.setValue(true);
+            this.frame.dispose();
         });
     }
 
     private void configurePlayButton(){
         play_button.addActionListener(e -> {
             if (controller.getModel().getCurrentHero() != null) {
-                new_hero_selected.setValue(!new_hero_selected.getValue());
-                controller.setMap();
-                alive.setValue(false);
-                play_view_alive.setValue(true);
+                play.setValue(true);
+                this.frame.dispose();
             }
         });
     }
 
     private void configureBindings(){
-        //VISIBILITY
-        this.alive.bindBidirectional(controller.menuViewAliveProperty());
-        //CREATE HERO VISIBILITY
-        this.create_view_alive.bindBidirectional(controller.createViewAliveProperty());
-        //SELECT HERO VISIBILITY
-        this.select_view_alive.bindBidirectional(controller.selectViewAliveProperty());
-        //PLAT VISIBILITY
-        this.play_view_alive.bindBidirectional(controller.playViewAliveProperty());
-        //DELETE MENU
-        this.drop_menu.bindBidirectional(controller.dropMenuViewProperty());
-        //GO TO CONSOLE MODE
-        this.play_console.bindBidirectional(controller.playConsoleProperty());
-        //CLOSE GAME
-        this.close_game.bindBidirectional(controller.closeGameProperty());
-        //ENABLE SELECT HERO
-        this.play_enable.bindBidirectional(controller.playEnableProperty());
-        //ENABLE PLAY
-        this.select_enable.bindBidirectional(controller.selectEnableProperty());
+        this.drop_menu.bindBidirectional(this.controller.dropMenuProperty());
 
-        this.new_hero_selected.bindBidirectional(controller.newHeroSelectedProperty());
+        this.console_mode.bindBidirectional(this.controller.consoleModeProperty());
+        this.new_hero.bindBidirectional(this.controller.newHeroProperty());
+        this.select_hero.bindBidirectional(this.controller.selectHeroProperty());
+        this.play.bindBidirectional(this.controller.playProperty());
+
+        this.play_enable.bindBidirectional(this.controller.playEnableProperty());
+        this.select_enable.bindBidirectional(this.controller.selectEnableProperty());
     }
 
     private void configureListener(){
-        this.alive.addListener((obs, old, newValue) -> {
-            frame.setVisible(newValue);
-        });
-
-        this.drop_menu.addListener((obs, old, newValue) ->{
-            if (newValue) {
-                frame.dispose();
-            }
-        });
-
-        this.select_enable.addListener((obs, old, newValue) ->{
+        this.enable_select.addListener((obs, old, newValue) ->{
             if (newValue){
                 select_hero_button.setEnabled(true);
             }else{
                 select_hero_button.setEnabled(false);
             }
-
         });
 
-        this.play_enable.addListener((obs, old, newValue) ->{
+        this.enable_play.addListener((obs, old, newValue) ->{
             if (newValue){
                 play_button.setEnabled(true);
             }else{

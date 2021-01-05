@@ -210,13 +210,9 @@ public class Swingy {
                                         "To switch for gui mode, type GUI. " +
                                         "To exit, type EXIT");
                     command = scan.nextLine();
-                } while (command.compareTo("CREATE") != 0 && command.compareTo("SELECT") != 0 && command.compareTo("PLAY") != 0 /*&& command.compareTo("GUI") != 0 */&& command.compareTo("EXIT") != 0);
-                if (command.compareTo("EXIT") == 0)
+                } while (command.compareTo("CREATE") != 0 && command.compareTo("SELECT") != 0 && command.compareTo("PLAY") != 0 && command.compareTo("GUI") != 0 && command.compareTo("EXIT") != 0);
+                if (command.compareTo("EXIT") == 0 || command.compareTo("GUI") == 0)
                     break;
-                /*
-                else if (command.compareTo("GUI") == 0)
-                    launchGuiGame(model);
-                 */
                 else if (command.compareTo("CREATE") == 0)
                     model.addNewHeroConsole();
                 else if (command.compareTo("SELECT") == 0) {
@@ -230,12 +226,14 @@ public class Swingy {
                 }
             }
         }
+        if (command.compareTo("GUI") == 0)
+            launchGuiGame(model);
         System.out.println("See you next time");
     }
 
     public static void launchGuiGame(Model model) throws Exception {
         Controller controller = new Controller(model);
-        View view = new View(controller);
+        MenuView view = new MenuView(controller);
     }
     //ENTRY POINT
     public static void main(String[] args){

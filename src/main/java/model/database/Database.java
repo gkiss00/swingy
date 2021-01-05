@@ -11,7 +11,7 @@ public class Database{
     public Database(){
         try{
 
-            String url = "jdbc:mysql://localhost:3306/test";
+            String url = "jdbc:mysql://localhost:3306/swingy";
             String user = "root";
 
             Class.forName("com.mysql.cj.jdbc.Driver");
