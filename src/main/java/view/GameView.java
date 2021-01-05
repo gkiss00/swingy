@@ -25,12 +25,10 @@ public class GameView {
     //the frame
     private JFrame frame;
     private final int frame_size = 1000;
-
     private JLabel advert;
     private TextField input;
     private JButton run;
     private JButton fight;
-
     private JPanel input_validate;
     private JPanel board;
     private JPanel panel;
@@ -40,13 +38,20 @@ public class GameView {
 
     public GameView(Controller controller){
         this.controller = controller;
+        this.map_size = controller.getMapSize();
         this.frame = new JFrame("SWING GAME");
 
+        //configure board game
+        configureButtons();
+        configureBoard();
+        //configure messages
         configureLabel();
         configureInput();
+        //configure action buttons
         configureRun();
         configureFight();
         configureInputValidate();
+        //configure frame and listener
         configureFrame();
         configureBindings();
         configureListener();
@@ -54,8 +59,16 @@ public class GameView {
         frame.setVisible(true);
     }
 
+    private void configureLabel(){
+        advert = new JLabel("Advert will apear here");
+    }
+
+    private void configureInput(){
+        input = new TextField();
+    }
+    //button run
     private void configureRun(){
-        run = new JButton("Run");
+        this.run = new JButton("Run");
         run.setEnabled(false);
         run.addActionListener(e ->{
             if (enemy != null){
@@ -69,9 +82,9 @@ public class GameView {
             }
         });
     }
-
+    //button fight
     private void configureFight(){
-        fight = new JButton("Fight");
+        this.fight = new JButton("Fight");
         fight.setEnabled(false);
         fight.addActionListener(e ->{
             if (enemy != null){
@@ -86,24 +99,15 @@ public class GameView {
         });
     }
 
-    private void configureInput(){
-        input = new TextField();
-    }
-
     private void configureInputValidate(){
-        input_validate = new JPanel();
+        this.input_validate = new JPanel();
         input_validate.setLayout(new BoxLayout(input_validate, BoxLayout.X_AXIS));
         input_validate.add(run);
         input_validate.add(fight);
     }
 
-    private void configureLabel(){
-        advert = new JLabel("Advert will apear here");
-    }
-
     private void configureBoard(){
-        map_size = controller.getMapSize();
-        board = new JPanel(new GridLayout(map_size, map_size));
+        this.board = new JPanel(new GridLayout(map_size, map_size));
         for (int i = 0; i < map_size * map_size; ++i){
             board.add(buttons.get(i));
         }
@@ -118,20 +122,17 @@ public class GameView {
     }
 
     private void configureFrame(){
-        //To close the window
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setPreferredSize(new Dimension(frame_size, frame_size));
         frame.pack();
-
 
         frame.add(panel);
         //frame.setLayout(new GridLayout(map_size, map_size));
         //center to the screen
         frame.setLocationRelativeTo(null);
     }
-
+    //the map
     private void configureButtons(){
-        buttons.clear();
         for (int y = 0; y < map_size; ++y){
             for (int x = 0; x < map_size; ++x){
                 JButton b = new JButton();
@@ -176,7 +177,7 @@ public class GameView {
 
         }
     }
-
+    //enables buttons
     private void updateButtonActivated(){
         if (enemy == null){
             run.setEnabled(false);
@@ -188,7 +189,7 @@ public class GameView {
             enableBoard(false);
         }
     }
-
+    //enable the board
     private void enableBoard(Boolean b){
         for (int y = 0; y < map_size; ++y){
             for (int x = 0; x < map_size; ++x){
@@ -202,7 +203,6 @@ public class GameView {
     }
 
     private void configureListener(){
-
         this.drop_game.addListener((obs, old, newValue) ->{
             if (newValue) {
                 frame.dispose();

@@ -176,6 +176,7 @@ public class Controller {
         this.play.addListener((obs, old, newValue) ->{
             if (newValue){
                 //open the play view
+                setMap();
                 GameView cv = new GameView(this);
             }else{
                 
@@ -223,7 +224,6 @@ public class Controller {
     public void selectHero(String text){
         String[] args = text.split("\\s+");
         model.setCurrentHero(args[0]);
-        setMap();
         enable_play.setValue(true);
         MenuView mv = new MenuView(this);
     }
