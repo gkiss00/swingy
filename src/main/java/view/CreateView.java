@@ -32,6 +32,7 @@ public class CreateView {
     private final String error_msg0 = "";
     private final String error_msg1 = "Pseudo already taken";
     private final String error_msg2 = "Your hero class can't be empty";
+    private final String error_msg3 = "Your inputs can only be letters";
 
     public CreateView(Controller controller){
         this.controller = controller;
@@ -85,8 +86,10 @@ public class CreateView {
                 errors.setText(error_msg0);
             else if ((int)newValue == 1)
                 errors.setText(error_msg1);
-            else
+            else if ((int)newValue == 2)
                 errors.setText(error_msg2);
+            else
+                errors.setText(error_msg3);
         });
 
         this.drop_create.addListener((obl, old, newValue) -> {

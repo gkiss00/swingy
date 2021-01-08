@@ -136,11 +136,11 @@ public class Model {
         do {
             System.out.println("Your hero name : ");
             name = scan.nextLine();
-        }while(nameAlreadyTaken(name) || isNullOrEmpty(name));
+        }while(nameAlreadyTaken(name) || isNullOrEmpty(name) || !isGoodChar(name));
         do {
             System.out.println("Your hero class : ");
             _class = scan.nextLine();
-        }while(isNullOrEmpty(_class));
+        }while(isNullOrEmpty(_class) || !isGoodChar(_class));
         Hero h = new Hero(name, _class, 1, 0, 30, 10, 100);
         requestAddHero(h);
         heroes.add(h);
@@ -151,7 +151,7 @@ public class Model {
             db.addHero(h);
             requestGetAllHeroes();
         }catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Error while inserting in database");
         }
     }
 
@@ -271,5 +271,15 @@ public class Model {
         }
         System.out.println("Your input can't be empty");
         return (true);
+    }
+
+    private boolean isGoodChar(String str){
+        for (int i = 0; i < str.length(); ++i){
+            if (str.charAt(i) == '"' || str.charAt(i) == '\'' || str.charAt(i) == '\\'){
+                System.out.println("Your input can not contains specail caractere");
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -218,6 +218,10 @@ public class Controller {
             input_errors.setValue(2);
             return false;
         }
+        if (!isGoodChar(name) || !isGoodChar(_class)){
+            input_errors.setValue(3);
+            return false;
+        }
         return true;
     }
     private boolean validateName(String name){
@@ -267,6 +271,7 @@ public class Controller {
         String args[] = cmd.split("\\s+");
         int x = Integer.parseInt(args[0]);
         int y = Integer.parseInt(args[1]);
+        model.getCurrentHero().restaureHp();
         return model.updateMap(x, y);
     }
 
@@ -310,6 +315,7 @@ public class Controller {
             if(model.getCurrentHero().getHp() <= 0) {
                 end_game.setValue(true);
                 resetProperty(end_game);
+                GameView cv = new GameView(this);
                 return (false);
             }
         }
@@ -372,5 +378,13 @@ public class Controller {
 
     private void resetProperty(SimpleBooleanProperty sbp){
         sbp.setValue(false);
+    }
+
+    private boolean isGoodChar(String str){
+        for (int i = 0; i < str.length(); ++i){
+            if (str.charAt(i) == '"' || str.charAt(i) == '\'' || str.charAt(i) == '\\')
+                return false;
+        }
+        return true;
     }
 }
