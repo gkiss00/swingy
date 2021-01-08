@@ -315,7 +315,7 @@ public class Controller {
             if(model.getCurrentHero().getHp() <= 0) {
                 end_game.setValue(true);
                 resetProperty(end_game);
-                GameView cv = new GameView(this);
+                MenuView cv = new MenuView(this);
                 return (false);
             }
         }
