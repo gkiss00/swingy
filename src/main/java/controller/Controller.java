@@ -198,6 +198,7 @@ public class Controller {
                 //open the play view
                 setMap();
                 resetProperty(play);
+                model.getCurrentHero().restaureHp();
                 GameView cv = new GameView(this);
             }else{
                 
@@ -271,7 +272,6 @@ public class Controller {
         String args[] = cmd.split("\\s+");
         int x = Integer.parseInt(args[0]);
         int y = Integer.parseInt(args[1]);
-        model.getCurrentHero().restaureHp();
         return model.updateMap(x, y);
     }
 
