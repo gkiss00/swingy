@@ -382,7 +382,7 @@ public class Controller {
 
     private boolean isGoodChar(String str){
         for (int i = 0; i < str.length(); ++i){
-            if (str.charAt(i) == '"' || str.charAt(i) == '\'' || str.charAt(i) == '\\')
+            if (Character.isLetter(str.charAt(i)) == false)
                 return false;
         }
         return true;
