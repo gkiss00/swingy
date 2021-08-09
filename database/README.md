@@ -1,3 +1,5 @@
+# Instal the DB
+
 export PATH=${PATH}:/usr/local/mysql/bin/
 
 mysql -u root -p
